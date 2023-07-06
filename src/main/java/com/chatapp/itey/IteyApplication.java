@@ -1,0 +1,12 @@
+package com.chatapp.itey;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class IteyApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(IteyApplication.class, args);
+	}
+
+}

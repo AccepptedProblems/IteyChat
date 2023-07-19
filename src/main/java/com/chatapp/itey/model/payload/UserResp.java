@@ -2,7 +2,9 @@ package com.chatapp.itey.model.payload;
 
 import com.chatapp.itey.model.entity.Gender;
 import com.chatapp.itey.model.entity.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +18,8 @@ public class UserResp {
     private Gender gender;
     private String dayOfBirth;
 
-    public UserResp(User user) {
-        this.id = user.getId();
+    public UserResp(User user, String id) {
+        this.id = id;
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.email = user.getEmail();

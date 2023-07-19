@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +23,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUserDetailSrv jwtUserDetailSrv;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        try {
+            String jwt = getJwtFromRequest(request);
+            if (StringUtils.hasText(jwt) && Boolean.TRUE.equals(tokenProvider.validateToken(jwt))) {
+                setAuthenticateForToken(request, jwt);
+            }
+        } catch (Exception ex) {
+            Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
+            log.error("failed on set user authentication", ex);
+        }
+        filterChain.doFilter(request, response);
     }
 
     private void setAuthenticateForToken(HttpServletRequest request, String jwt) {

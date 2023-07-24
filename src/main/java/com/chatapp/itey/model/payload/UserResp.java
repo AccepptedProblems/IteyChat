@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class UserResp {
     private String id;
     private String username;
-    private String password;
     private String email;
     private String displayName;
     private Gender gender;
@@ -21,7 +20,6 @@ public class UserResp {
     public UserResp(User user, String id) {
         this.id = id;
         this.username = user.getUsername();
-        this.password = user.getPassword();
         this.email = user.getEmail();
         this.displayName = user.getDisplayName();
         this.gender = user.getGender();

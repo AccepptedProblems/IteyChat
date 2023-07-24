@@ -1,3 +1,11 @@
-
 jwt:
   secret: urieuryeiur
+
+data:
+  database:
+    users: Users
+    constraints: Constraint
+
+  constraints:
+    usernameConst: Username
+    userEmailConst: UserEmail

@@ -1,5 +1,6 @@
 package com.chatapp.itey.model.entity;
 
+import com.chatapp.itey.model.payload.UserReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,14 @@ public class User {
     private String displayName;
     private Gender gender;
     private String dayOfBirth;
+
+    public User(UserReq userReq) {
+        this.username = userReq.getUsername();
+        this.password = userReq.getPassword();
+        this.email = userReq.getEmail();
+        this.displayName = userReq.getDisplayName();
+        this.gender = userReq.getGender();
+        this.dayOfBirth = userReq.getDayOfBirth().toString();
+    }
 }
 

@@ -48,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.userDetailsService(jwtUserDetailSrv) // Cung cáp userservice cho spring security
-                .passwordEncoder(passwordEncoder()); // cung cấp password encoder
+        auth.userDetailsService(jwtUserDetailSrv)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -58,8 +58,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/login").permitAll()
-                .antMatchers("/api/register").permitAll()
+                .authorizeRequests().antMatchers("/v1/api/user/login").permitAll()
+                .antMatchers("/v1/api/user/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

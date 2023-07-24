@@ -5,6 +5,8 @@ import com.chatapp.itey.model.payload.LoginResp;
 import com.chatapp.itey.model.payload.UserReq;
 import com.chatapp.itey.model.payload.UserResp;
 import com.chatapp.itey.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;

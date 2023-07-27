@@ -35,9 +35,15 @@ public class UserController {
         return userSrv.loginUser(loginReq);
     }
 
-    @GetMapping("")
+    @GetMapping
     Mono<List<UserResp>> getUsersByDisplayName(@RequestParam String displayName) throws ExecutionException, InterruptedException {
         return userSrv.findUserByDisplayName(displayName);
+    }
+
+    @GetMapping("/all")
+    Mono<List<UserResp>> getAllUser() {
+        //TODO: Get all users
+        return null;
     }
 
 }

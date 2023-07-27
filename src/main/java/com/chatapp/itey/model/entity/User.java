@@ -1,5 +1,6 @@
 package com.chatapp.itey.model.entity;
 
+import com.chatapp.itey.model.entity.modelType.Gender;
 import com.chatapp.itey.model.payload.UserReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

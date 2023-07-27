@@ -6,14 +6,14 @@ import java.util.UUID;
 
 public class IteyUtils {
 
-    public static String newUUID(String username) {
-        return generateUUID(username).toString();
+    public static String newUUID(String keyStr) {
+        return generateUUID(keyStr).toString();
     }
-    public static UUID generateUUID(String username) {
-        if (username == null) {
+    public static UUID generateUUID(String keyStr) {
+        if (keyStr == null) {
             throw new IllegalArgumentException("Input string cannot be null");
         }
-        byte[] inputBytes = username.getBytes();
+        byte[] inputBytes = keyStr.getBytes();
         UUID timeBasedUUID = Generators.timeBasedGenerator().generate();
         long timestamp = (timeBasedUUID.timestamp() - 0x01b21dd213814000L) / 10000L;
 

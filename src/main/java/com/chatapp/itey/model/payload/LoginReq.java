@@ -1,7 +1,12 @@
 package com.chatapp.itey.model.payload;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.chatapp.itey.model.entity.ChatChannel;
+import com.chatapp.itey.model.entity.Message;
+import com.chatapp.itey.model.entity.User;
+import com.chatapp.itey.model.entity.modelType.ChannelType;
+import lombok.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor

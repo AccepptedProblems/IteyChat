@@ -74,4 +74,9 @@ public class UserSrvImpl implements UserService {
     public Mono<List<UserResp>> findUserByDisplayName(String displayName) throws ExecutionException, InterruptedException {
         return Mono.just(userRepo.findByDisplayName(displayName));
     }
+
+    @Override
+    public Mono<List<UserResp>> getAllUsers() {
+        return Mono.just(userRepo.getAll());
+    }
 }

@@ -15,4 +15,5 @@ public interface UserService {
     Mono<UserResp> findUserById(String id) throws ExecutionException, InterruptedException;
     Mono<UserResp> findUsersByUsername(String username) throws ExecutionException, InterruptedException;
     Mono<List<UserResp>> findUserByDisplayName(String displayName) throws ExecutionException, InterruptedException;
+    Mono<List<UserResp>> getAllUsers();
 }

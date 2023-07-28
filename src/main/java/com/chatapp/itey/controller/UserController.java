@@ -42,8 +42,7 @@ public class UserController {
 
     @GetMapping("/all")
     Mono<List<UserResp>> getAllUser() {
-        //TODO: Get all users
-        return null;
+        return userSrv.getAllUsers();
     }
 
 }

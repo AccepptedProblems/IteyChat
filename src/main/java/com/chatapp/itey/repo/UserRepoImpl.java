@@ -2,20 +2,22 @@ package com.chatapp.itey.repo;
 
 import com.chatapp.itey.model.entity.UniqueField;
 import com.chatapp.itey.model.entity.User;
-import com.chatapp.itey.model.payload.LoginResp;
 import com.chatapp.itey.model.payload.UserReq;
 import com.chatapp.itey.model.payload.UserResp;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.util.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -41,7 +43,7 @@ public class UserRepoImpl implements UserRepo {
         DocumentReference userDocRef = firestore.collection(userPath).document(id);
         try {
             User newUser = new User(userReq);
-            User user = firestore.runTransaction(transaction -> {
+            return firestore.runTransaction(transaction -> {
                         DocumentReference usernameDocRef = firestore.collection(constraintPath).document(userPath).collection(userConstPath).document(newUser.getUsername());
                         DocumentReference userEmailDocRef = firestore.collection(constraintPath).document(userPath).collection(userEmailConstPath).document(newUser.getEmail());
                         UniqueField usernameKey = new UniqueField(id);
@@ -54,7 +56,6 @@ public class UserRepoImpl implements UserRepo {
                         return newUser;
                     }
             ).get();
-            return user;
         } catch (ExecutionException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot create user at this time. Please try again.");
@@ -70,6 +71,16 @@ public class UserRepoImpl implements UserRepo {
         DocumentReference userDoc = firestore.collection(userPath).document(id);
         DocumentSnapshot snapshot = userDoc.get().get();
         return snapshot.toObject(User.class);
+    }
+
+    @Override
+    public User findByEmail(String email) throws ExecutionException, InterruptedException {
+        List<QueryDocumentSnapshot> userDocs = firestore.collection(userPath)
+                .whereEqualTo("email", email).get().get().getDocuments();
+        if (userDocs.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with this email");
+        }
+        return userDocs.get(0).toObject(User.class);
     }
 
     @Override
@@ -93,9 +104,7 @@ public class UserRepoImpl implements UserRepo {
             log.error("No user has this username");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user has this username");
         }
-        String id = userDocs.get(0).getId();
-        User user = userDocs.get(0).toObject(User.class);
-        return user;
+        return userDocs.get(0).toObject(User.class);
     }
 
     @Override
@@ -108,7 +117,20 @@ public class UserRepoImpl implements UserRepo {
             log.error("No user has this username");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user has this username");
         }
-        List<UserResp> users = userDocs.stream().map(value -> new UserResp(value.toObject(User.class), value.getId())).toList();
-        return users;
+        return userDocs.stream().map(value -> new UserResp(value.toObject(User.class), value.getId())).toList();
+    }
+
+    @Override
+    public List<UserResp> getAll() {
+        Iterable<DocumentReference> userDocs = firestore.collection(userPath).listDocuments();
+        List<UserResp> user = new ArrayList<>();
+        userDocs.forEach(value -> {
+            try {
+                user.add(new UserResp(Objects.requireNonNull(value.get().get().toObject(User.class)), value.getId()));
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return user;
     }
 }

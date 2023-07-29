@@ -21,8 +21,8 @@ public class MessageResp {
     private String content;
     private LocalDateTime timeSent;
 
-    public MessageResp(Message message, String id) {
-        this.id = id;
+    public MessageResp(Message message) {
+        this.id = message.getId();
         this.channelId = message.getChannelId();
         this.userSendId = message.getUserSendId();
         this.type = message.getType();

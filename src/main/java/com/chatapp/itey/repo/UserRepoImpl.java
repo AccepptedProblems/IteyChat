@@ -58,7 +58,7 @@ public class UserRepoImpl implements UserRepo {
             ).get();
         } catch (ExecutionException e) {
             log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot create user at this time. Please try again.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User with provided information already exist");
         } catch (InterruptedException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with provided information already exist");

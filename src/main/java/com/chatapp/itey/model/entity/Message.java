@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Message {
+    private String id;
     private String channelId;
     private String userSendId;
     private MessageType type;

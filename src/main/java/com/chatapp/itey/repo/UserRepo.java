@@ -12,6 +12,7 @@ public interface UserRepo {
     User createUser(UserReq userReq, String id) throws ExecutionException, InterruptedException;
     User findById(String id) throws ExecutionException, InterruptedException;
     User findByEmail(String email) throws ExecutionException, InterruptedException;
+    UserResp findUserRespByEmail(String email) throws ExecutionException, InterruptedException;
     UserResp findByUsername(String username) throws ExecutionException, InterruptedException;
     User findUserByUsername(String username) throws ExecutionException, InterruptedException;
     List<UserResp> findByDisplayName(String displayName) throws ExecutionException, InterruptedException;

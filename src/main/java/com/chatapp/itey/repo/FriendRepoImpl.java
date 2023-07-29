@@ -35,7 +35,6 @@ public class FriendRepoImpl implements FriendRepo {
 
     @Override
     public User addFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
-        System.out.println(relaPath);
         Relationship relationship = new Relationship(relationshipRequest);
         firestore.collection(relaPath).document(relationship.getId())
                 .set(relationship);

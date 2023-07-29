@@ -53,10 +53,12 @@ public class UserSrvImpl implements UserService {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateToken((CustomUserDetail) authentication.getPrincipal());
-
-            return Mono.just(new LoginResp(jwt));
+            UserResp user = userRepo.findUserRespByEmail(loginReq.getUsername());
+            return Mono.just(new LoginResp(user, jwt));
         } catch (BadCredentialsException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Wrong username or password");
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

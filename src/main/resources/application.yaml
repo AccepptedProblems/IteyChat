@@ -8,7 +8,7 @@ data:
   database:
     users: Users
     relationships: Relationship
-    message: Messages
+    messages: Messages
     channel: ChatChannel
     constraints: Constraint
 

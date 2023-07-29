@@ -20,13 +20,13 @@ public class ChatChannelResp {
     private ChannelType type;
     private String name;
     private Message latestMess;
-    private List<User> users;
+    private List<UserResp> users;
 
-    public ChatChannelResp(ChatChannel chatChannel, Message message, String id) {
+    public ChatChannelResp(ChatChannel chatChannel, Message message, String id, List<UserResp> users) {
         this.id = id;
         this.type = chatChannel.getType();
         this.name = chatChannel.getName();
         this.latestMess = message;
-        this.users = chatChannel.getUsers();
+        this.users = users;
     }
 }

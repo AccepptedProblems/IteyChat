@@ -84,6 +84,19 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
+    public UserResp findUserRespByEmail(String email) throws ExecutionException, InterruptedException {
+        List<QueryDocumentSnapshot> userDocs = firestore.collection(userPath)
+                .whereEqualTo("email", email).get().get().getDocuments();
+        if (userDocs.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There's no user with this email");
+        }
+
+        UserResp user = userDocs.get(0).toObject(UserResp.class);
+        user.setId(userDocs.get(0).getId());
+        return user;
+    }
+
+    @Override
     public UserResp findByUsername(String username) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> userDocs = firestore.collection(userPath)
                 .whereEqualTo("username", username).get().get().getDocuments();

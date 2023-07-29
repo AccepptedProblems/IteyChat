@@ -5,9 +5,10 @@ import com.chatapp.itey.model.payload.MessageReq;
 import com.chatapp.itey.model.payload.MessageResp;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface MessageRepo {
-    Message addMessage(MessageReq messageReq);
-    List<Message> getMessagesFromChannel(String channelId);
-    Message deleteMessage(String messageId);
+    Message addMessage(MessageReq messageReq) throws ExecutionException, InterruptedException;
+    List<Message> getMessagesFromChannel(String channelId) throws ExecutionException, InterruptedException;
+    Message deleteMessage(String messageId) throws ExecutionException, InterruptedException;
 }

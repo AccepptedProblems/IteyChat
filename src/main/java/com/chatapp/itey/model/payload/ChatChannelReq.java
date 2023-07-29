@@ -1,4 +1,4 @@
-package com.chatapp.itey.model.entity;
+package com.chatapp.itey.model.payload;
 
 import com.chatapp.itey.model.entity.modelType.ChannelType;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChatChannel {
-    private String id;
+public class ChatChannelReq {
     private ChannelType type;
     private String name;
+    private List<String> users;
 }

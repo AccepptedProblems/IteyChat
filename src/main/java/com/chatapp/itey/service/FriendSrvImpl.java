@@ -1,7 +1,6 @@
 package com.chatapp.itey.service;
 
 import com.chatapp.itey.model.entity.Relationship;
-import com.chatapp.itey.model.entity.modelType.RelationshipStatus;
 import com.chatapp.itey.model.payload.FriendResp;
 import com.chatapp.itey.model.payload.RelationshipRequest;
 import com.chatapp.itey.model.payload.UserResp;
@@ -31,12 +30,12 @@ public class FriendSrvImpl implements FriendService{
 
     @Override
     public Mono<List<FriendResp>> friendList(String userId) throws ExecutionException, InterruptedException {
-        return Mono.just(friendRepo.getFriends(userId, RelationshipStatus.FRIEND));
+        return Mono.just(friendRepo.getFriends(userId));
     }
 
     @Override
     public Mono<List<FriendResp>> friendRequestList(String userId) throws ExecutionException, InterruptedException {
-        return Mono.just(friendRepo.getFriends(userId, RelationshipStatus.PENDING));
+        return Mono.just(friendRepo.getFriendRequest(userId));
     }
 
     @Override

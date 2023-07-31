@@ -10,6 +10,8 @@ data:
     relationships: Relationship
     messages: Messages
     channel: ChatChannel
+    channelName: ChatChannelName
+    inChatChannel: InChatChannel
     constraints: Constraint
 
   constraints:

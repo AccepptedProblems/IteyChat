@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface MessageRepo {
     Message addMessage(MessageReq messageReq) throws ExecutionException, InterruptedException;
+    Message findMessageById(String id) throws ExecutionException, InterruptedException;
     List<Message> getMessagesFromChannel(String channelId) throws ExecutionException, InterruptedException;
     Message deleteMessage(String messageId) throws ExecutionException, InterruptedException;
 }

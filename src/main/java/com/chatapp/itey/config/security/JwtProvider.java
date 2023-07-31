@@ -34,6 +34,7 @@ public class JwtProvider implements Serializable {
 
     public String generateToken(CustomUserDetail userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("user", userDetails);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

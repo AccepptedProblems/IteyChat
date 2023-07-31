@@ -15,5 +15,5 @@ import java.util.List;
 public class ChatChannelReq {
     private ChannelType type;
     private String name;
-    private List<String> users;
+    private List<String> userIds;
 }

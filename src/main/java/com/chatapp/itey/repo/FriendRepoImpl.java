@@ -66,11 +66,11 @@ public class FriendRepoImpl implements FriendRepo {
     }
 
     @Override
-    public List<FriendResp> getFriends(String userId, RelationshipStatus status) throws ExecutionException, InterruptedException {
+    public List<FriendResp> getFriends(String userId) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> docs = firestore.collection(relaPath).where(Filter.or(
                 Filter.equalTo("userFromId", userId),
                 Filter.equalTo("userToId", userId)
-        )).whereEqualTo("status", status).get().get().getDocuments();
+        )).whereEqualTo("status", RelationshipStatus.FRIEND).get().get().getDocuments();
 
         List<String> ids = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
@@ -81,15 +81,49 @@ public class FriendRepoImpl implements FriendRepo {
             if (!Objects.equals(relationship.getUserToId(), userId)) {
                 ids.add(relationship.getUserToId());
 
-            }
-            else ids.add(relationship.getUserFromId());
-            map.put(ids.get(ids.size()-1), relationshipDoc.getId());
+            } else ids.add(relationship.getUserFromId());
+            map.put(ids.get(ids.size() - 1), relationshipDoc.getId());
         });
 
         Iterable<DocumentReference> userDocs = firestore.collection(userPath).listDocuments();
         userDocs.forEach(userDoc -> {
             try {
-                if(ids.contains(userDoc.getId())) {
+                if (ids.contains(userDoc.getId())) {
+                    UserResp user = userDoc.get().get().toObject(UserResp.class);
+                    user.setId(userDoc.getId());
+                    users.add(new FriendResp(map.get(userDoc.getId()), user));
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There's an error. Please try again.");
+            }
+        });
+
+        return users;
+    }
+
+    @Override
+    public List<FriendResp> getFriendRequest(String userId) throws ExecutionException, InterruptedException {
+        List<QueryDocumentSnapshot> docs = firestore.collection(relaPath).where(Filter.or(
+                Filter.equalTo("userToId", userId)
+        )).whereEqualTo("status", RelationshipStatus.PENDING).get().get().getDocuments();
+
+        List<String> ids = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        List<FriendResp> users = new ArrayList<>();
+
+        docs.forEach(relationshipDoc -> {
+            Relationship relationship = relationshipDoc.toObject(Relationship.class);
+            if (!Objects.equals(relationship.getUserToId(), userId)) {
+                ids.add(relationship.getUserToId());
+
+            } else ids.add(relationship.getUserFromId());
+            map.put(ids.get(ids.size() - 1), relationshipDoc.getId());
+        });
+
+        Iterable<DocumentReference> userDocs = firestore.collection(userPath).listDocuments();
+        userDocs.forEach(userDoc -> {
+            try {
+                if (ids.contains(userDoc.getId())) {
                     UserResp user = userDoc.get().get().toObject(UserResp.class);
                     user.setId(userDoc.getId());
                     users.add(new FriendResp(map.get(userDoc.getId()), user));
@@ -104,8 +138,12 @@ public class FriendRepoImpl implements FriendRepo {
 
     @Override
     public Boolean checkFriendRequest(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
-        List<QueryDocumentSnapshot> docs = getRelaBetweenTwoUsers(relationshipRequest);
-        return !docs.isEmpty() && !Objects.equals(docs.get(0).toObject(Relationship.class).getUserToId(), relationshipRequest.getUserToId());
+        List<QueryDocumentSnapshot> docs = firestore.collection(relaPath).where(Filter.and(
+                        Filter.equalTo("userFromId", relationshipRequest.getUserToId()),
+                        Filter.equalTo("userToId", relationshipRequest.getUserFromId())
+                )
+        ).get().get().getDocuments();
+        return !docs.isEmpty();
     }
 
     @Override

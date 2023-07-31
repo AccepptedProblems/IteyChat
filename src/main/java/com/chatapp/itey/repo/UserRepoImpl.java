@@ -134,6 +134,21 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
+    public List<UserResp> getUsersContainIn(List<String> userIds) {
+        return userIds.stream().map(id -> {
+            try {
+                UserResp user = firestore.collection(userPath).document(id).get().get().toObject(UserResp.class);
+                if (user != null) {
+                    user.setId(id);
+                }
+                return user;
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
+    }
+
+    @Override
     public List<UserResp> getAll() {
         Iterable<DocumentReference> userDocs = firestore.collection(userPath).listDocuments();
         List<UserResp> user = new ArrayList<>();

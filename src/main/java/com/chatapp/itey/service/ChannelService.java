@@ -5,9 +5,10 @@ import com.chatapp.itey.model.payload.ChatChannelResp;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface ChannelService {
-    Mono<ChatChannelResp> createChannel(ChatChannelReq chatChannelReq);
-    Mono<List<ChatChannelResp>> getUserChannels(String userId);
+    Mono<ChatChannelResp> createChannel(ChatChannelReq chatChannelReq) throws ExecutionException, InterruptedException;
+    Mono<List<ChatChannelResp>> getUserChannels(String userId) throws ExecutionException, InterruptedException;
     Mono<ChatChannelResp> deleteChannel(String channelId);
 }

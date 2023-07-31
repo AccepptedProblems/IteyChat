@@ -16,5 +16,6 @@ public interface UserRepo {
     UserResp findByUsername(String username) throws ExecutionException, InterruptedException;
     User findUserByUsername(String username) throws ExecutionException, InterruptedException;
     List<UserResp> findByDisplayName(String displayName) throws ExecutionException, InterruptedException;
+    List<UserResp> getUsersContainIn(List<String> userIds);
     List<UserResp> getAll();
 }

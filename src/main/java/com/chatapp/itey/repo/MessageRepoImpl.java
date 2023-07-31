@@ -1,5 +1,6 @@
 package com.chatapp.itey.repo;
 
+import com.chatapp.itey.model.entity.ChatChannel;
 import com.chatapp.itey.model.entity.Message;
 import com.chatapp.itey.model.payload.MessageReq;
 import com.google.cloud.firestore.DocumentReference;
@@ -20,15 +21,31 @@ public class MessageRepoImpl implements  MessageRepo{
     @Value("${data.database.messages}")
     private String messagePath;
 
+    @Value("${data.database.channel}")
+    private String channelPath;
+
     @Override
     public Message addMessage(MessageReq messageReq) throws ExecutionException, InterruptedException {
         Message message = new Message(messageReq);
-        Message createdMessage = firestore.runTransaction(transaction -> {
+        return firestore.runTransaction(transaction -> {
             DocumentReference messDoc = firestore.collection(messagePath).document(message.getId());
-            transaction.create(messDoc, message);
+
+
+            DocumentReference channelDoc = firestore.collection(channelPath).document(message.getChannelId());
+            ChatChannel channel = channelDoc.get().get().toObject(ChatChannel.class);
+            assert channel != null;
+            channel.setLastMessageId(message.getId());
+
+            transaction.create(messDoc, message)
+                    .set(channelDoc, channel);
+
             return message;
         }).get();
-        return createdMessage;
+    }
+
+    @Override
+    public Message findMessageById(String id) throws ExecutionException, InterruptedException {
+        return firestore.collection(messagePath).document(id).get().get().toObject(Message.class);
     }
 
     @Override
@@ -36,8 +53,7 @@ public class MessageRepoImpl implements  MessageRepo{
         List<QueryDocumentSnapshot> messDocs = firestore.collection(messagePath)
                 .whereEqualTo("channelId", channelId)
                 .get().get().getDocuments();
-        List<Message> messages = messDocs.stream().map(value -> value.toObject(Message.class)).toList();
-        return messages;
+        return messDocs.stream().map(value -> value.toObject(Message.class)).toList();
     }
 
     @Override

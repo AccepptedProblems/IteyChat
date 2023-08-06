@@ -26,6 +26,11 @@ public class ChannelController {
         return channelService.getUserChannels(userId);
     }
 
+    @GetMapping("/direct")
+    Mono<ChatChannelResp> getDirectChannelFromUserId(@RequestParam String userId) throws ExecutionException, InterruptedException {
+        return channelService.getDirectChannelFromUserId(userId);
+    }
+
     @DeleteMapping
     Mono<ChatChannelResp> deleteChannel() {
         return null;

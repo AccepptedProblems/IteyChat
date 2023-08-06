@@ -1,6 +1,7 @@
 package com.chatapp.itey.config.security;
 
 import com.chatapp.itey.model.entity.User;
+import com.chatapp.itey.model.payload.UserResp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.Collection;
 public class CustomUserDetail implements UserDetails {
 
     User user;
+    UserResp userResp;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

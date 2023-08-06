@@ -1,5 +1,7 @@
 package com.chatapp.itey.config.security;
 
+import com.chatapp.itey.model.entity.User;
+import com.chatapp.itey.model.payload.UserResp;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,8 @@ public class JwtProvider implements Serializable {
 
     public String generateToken(CustomUserDetail userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user", userDetails);
+        UserResp user = userDetails.getUserResp();
+        claims.put("user", user);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

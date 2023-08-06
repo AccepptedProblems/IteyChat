@@ -5,6 +5,7 @@ import com.chatapp.itey.model.payload.FriendResp;
 import com.chatapp.itey.model.payload.RelationshipRequest;
 import com.chatapp.itey.model.payload.UserResp;
 import com.chatapp.itey.repo.FriendRepo;
+import com.chatapp.itey.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -19,7 +20,7 @@ public class FriendSrvImpl implements FriendService{
     
     @Override
     public Mono<UserResp> addFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
-        //TODO: Validate data
+        Validator.validFriendRequest(relationshipRequest);
         if(friendRepo.checkFriendRequest(relationshipRequest)) {
             Relationship rela = friendRepo.getRelationshipByUserId(relationshipRequest);
             return Mono.just(new UserResp(friendRepo.confirmFriendRequest(rela.getId()), relationshipRequest.getUserToId()));

@@ -1,6 +1,8 @@
 package com.chatapp.itey.service;
 
 import com.chatapp.itey.model.entity.ChatChannel;
+import com.chatapp.itey.model.entity.Message;
+import com.chatapp.itey.model.entity.modelType.ChannelType;
 import com.chatapp.itey.model.payload.ChatChannelReq;
 import com.chatapp.itey.model.payload.ChatChannelResp;
 import com.chatapp.itey.model.payload.MessageResp;
@@ -29,26 +31,62 @@ public class ChannelSrvImpl implements ChannelService {
     @Override
     public Mono<ChatChannelResp> createChannel(ChatChannelReq chatChannelReq) throws ExecutionException, InterruptedException {
         ChatChannel channel = channelRepo.addChannel(chatChannelReq);
+        channel.setName(channelRepo.getChannelName(channel));
         List<UserResp> users = userRepo.getUsersContainIn(chatChannelReq.getUserIds());
         return Mono.just(new ChatChannelResp(channel, null, users));
     }
 
     @Override
+    public Mono<ChatChannelResp> getChannelById(String channelId) throws ExecutionException, InterruptedException {
+        ChatChannel channel = channelRepo.getChannelById(channelId);
+        channel.setName(channelRepo.getChannelName(channel));
+        List<UserResp> users = channelRepo.getUserInChannel(channelId);
+        Message message = messageRepo.getMessagesFromChannel(channelId).get(0);
+        return Mono.just(new ChatChannelResp(channel, new MessageResp(message), users));
+    }
+
+    @Override
     public Mono<List<ChatChannelResp>> getUserChannels(String userId) throws ExecutionException, InterruptedException {
-        List<ChatChannel> channels = channelRepo.getChannelByUserId(userId);
+        List<ChatChannel> channels = channelRepo.getChannelsByUserId(userId);
         System.out.println(channels);
         List<ChatChannelResp> chatChannelResps = channels.stream().map(channel -> {
             try {
+                ChatChannel finalChannel = channel;
+                finalChannel.setName(channelRepo.getChannelName(channel));
                 MessageResp message;
                 if(channel.getLastMessageId() == null) message = null;
                 else message = new MessageResp(messageRepo.findMessageById(channel.getLastMessageId()));
                 List<UserResp> users = channelRepo.getUserInChannel(channel.getId());
-                return new ChatChannelResp(channel, message, users);
+                return new ChatChannelResp(finalChannel, message, users);
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }).toList();
         return Mono.just(chatChannelResps);
+    }
+
+    @Override
+    public Mono<ChatChannelResp> getDirectChannelFromUserId(String userId) throws ExecutionException, InterruptedException {
+        String currentUserId = UserResp.currentUser().getId();
+        List<ChatChannel> channels = channelRepo.getChannelsByUserId(currentUserId);
+
+        List<ChatChannel> results = channels.stream().filter(value -> {
+            try {
+                List<String> users = channelRepo.getUserInChannel(value.getId()).stream().map(UserResp::getId).toList();
+                return users.contains(userId) && value.getType() == ChannelType.DIRECT;
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).toList();
+        if (results.isEmpty()){
+            return createChannel(new ChatChannelReq(ChannelType.DIRECT, "", List.of(currentUserId, userId)));
+        }
+        ChatChannel channel = results.get(0);
+        channel.setName(channelRepo.getChannelName(channel));
+        MessageResp message = new MessageResp(messageRepo.getMessagesFromChannel(channel.getId()).get(0));
+        List<UserResp> users = channelRepo.getUserInChannel(channel.getId());
+        return Mono.just(new ChatChannelResp(channel, message, users));
     }
 
     @Override

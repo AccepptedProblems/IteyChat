@@ -66,6 +66,26 @@ public class FriendRepoImpl implements FriendRepo {
     }
 
     @Override
+    public List<String> getFriendIds() throws ExecutionException, InterruptedException {
+        String currentUserId = UserResp.currentUser().getId();
+        List<QueryDocumentSnapshot> docs = firestore.collection(relaPath).where(Filter.or(
+                Filter.equalTo("userFromId", currentUserId),
+                Filter.equalTo("userToId", currentUserId)
+        )).whereEqualTo("status", RelationshipStatus.FRIEND).get().get().getDocuments();
+
+        List<String> ids = new ArrayList<>();
+        List<FriendResp> users = new ArrayList<>();
+
+        docs.forEach(relationshipDoc -> {
+            Relationship relationship = relationshipDoc.toObject(Relationship.class);
+            if (!Objects.equals(relationship.getUserToId(), currentUserId)) {
+                ids.add(relationship.getUserToId());
+            } else ids.add(relationship.getUserFromId());
+        });
+        return ids;
+    }
+
+    @Override
     public List<FriendResp> getFriends(String userId) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> docs = firestore.collection(relaPath).where(Filter.or(
                 Filter.equalTo("userFromId", userId),
@@ -80,7 +100,6 @@ public class FriendRepoImpl implements FriendRepo {
             Relationship relationship = relationshipDoc.toObject(Relationship.class);
             if (!Objects.equals(relationship.getUserToId(), userId)) {
                 ids.add(relationship.getUserToId());
-
             } else ids.add(relationship.getUserFromId());
             map.put(ids.get(ids.size() - 1), relationshipDoc.getId());
         });
@@ -90,7 +109,9 @@ public class FriendRepoImpl implements FriendRepo {
             try {
                 if (ids.contains(userDoc.getId())) {
                     UserResp user = userDoc.get().get().toObject(UserResp.class);
-                    user.setId(userDoc.getId());
+                    if (user != null) {
+                        user.setId(userDoc.getId());
+                    }
                     users.add(new FriendResp(map.get(userDoc.getId()), user));
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -100,6 +121,8 @@ public class FriendRepoImpl implements FriendRepo {
 
         return users;
     }
+
+
 
     @Override
     public List<FriendResp> getFriendRequest(String userId) throws ExecutionException, InterruptedException {
@@ -125,7 +148,9 @@ public class FriendRepoImpl implements FriendRepo {
             try {
                 if (ids.contains(userDoc.getId())) {
                     UserResp user = userDoc.get().get().toObject(UserResp.class);
-                    user.setId(userDoc.getId());
+                    if (user != null) {
+                        user.setId(userDoc.getId());
+                    }
                     users.add(new FriendResp(map.get(userDoc.getId()), user));
                 }
             } catch (InterruptedException | ExecutionException e) {

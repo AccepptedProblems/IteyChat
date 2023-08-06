@@ -7,8 +7,10 @@ import com.chatapp.itey.model.payload.LoginReq;
 import com.chatapp.itey.model.payload.LoginResp;
 import com.chatapp.itey.model.payload.UserReq;
 import com.chatapp.itey.model.payload.UserResp;
+import com.chatapp.itey.repo.FriendRepo;
 import com.chatapp.itey.repo.UserRepo;
 import com.chatapp.itey.utils.IteyUtils;
+import com.chatapp.itey.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -28,6 +31,8 @@ import java.util.concurrent.ExecutionException;
 public class UserSrvImpl implements UserService {
     @Autowired
     UserRepo userRepo;
+    @Autowired
+    FriendRepo friendRepo;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -37,7 +42,7 @@ public class UserSrvImpl implements UserService {
 
     @Override
     public Mono<UserResp> createUser(UserReq userReq) throws ExecutionException, InterruptedException {
-        //TODO: Validate information
+        Validator.userSignInInformationValidate(userReq);
         String id = IteyUtils.newUUID(userReq.getUsername());
         String password = passwordEncoder.encode(userReq.getPassword());
         userReq.setPassword(password);
@@ -75,6 +80,19 @@ public class UserSrvImpl implements UserService {
     @Override
     public Mono<List<UserResp>> findUserByDisplayName(String displayName) throws ExecutionException, InterruptedException {
         return Mono.just(userRepo.findByDisplayName(displayName));
+    }
+
+    @Override
+    public Mono<List<UserResp>> findUserNotFriendByDisplayName(String displayName) throws ExecutionException, InterruptedException {
+        List<UserResp> result = new ArrayList<>();
+        List<UserResp> users = userRepo.findByDisplayName(displayName);
+        List<String> friendIds = friendRepo.getFriendIds();
+        users.forEach(value -> {
+            if(!friendIds.contains(value.getId())) {
+                result.add(value);
+            }
+        });
+        return Mono.just(result);
     }
 
     @Override

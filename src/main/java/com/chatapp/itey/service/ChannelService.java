@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface ChannelService {
     Mono<ChatChannelResp> createChannel(ChatChannelReq chatChannelReq) throws ExecutionException, InterruptedException;
+    Mono<ChatChannelResp> getChannelById(String channelId) throws ExecutionException, InterruptedException;
     Mono<List<ChatChannelResp>> getUserChannels(String userId) throws ExecutionException, InterruptedException;
+    Mono<ChatChannelResp> getDirectChannelFromUserId(String userId) throws ExecutionException, InterruptedException;
     Mono<ChatChannelResp> deleteChannel(String channelId);
 }

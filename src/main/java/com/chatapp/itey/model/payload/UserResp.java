@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResp {
+    private static UserResp currentUser;
+
     private String id;
     private String username;
     private String email;
@@ -24,6 +26,11 @@ public class UserResp {
         this.displayName = user.getDisplayName();
         this.gender = user.getGender();
         this.dayOfBirth = user.getDayOfBirth();
+    }
+
+    public static UserResp currentUser(){
+        if(currentUser == null) currentUser = new UserResp();
+        return currentUser;
     }
 }
 

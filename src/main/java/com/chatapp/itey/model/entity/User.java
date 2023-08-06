@@ -12,6 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
+    private static User currentUser;
+
     private String username;
     private String password;
     private String email;
@@ -27,5 +29,7 @@ public class User {
         this.gender = userReq.getGender();
         this.dayOfBirth = userReq.getDayOfBirth().toString();
     }
+
+
 }
 

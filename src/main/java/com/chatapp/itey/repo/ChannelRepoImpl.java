@@ -54,9 +54,7 @@ public class ChannelRepoImpl implements ChannelRepo {
             firestore.collection(channelNamePath).add(userChannelName2);
         }
 
-        chatChannelReq.getUserIds().forEach(id -> {
-            firestore.collection(inChannelPath).add(new InChatChannel(chatChannel.getId(), id));
-        });
+        chatChannelReq.getUserIds().forEach(id -> firestore.collection(inChannelPath).add(new InChatChannel(chatChannel.getId(), id)));
 
         return chatChannel;
     }
@@ -75,21 +73,32 @@ public class ChannelRepoImpl implements ChannelRepo {
     }
 
     @Override
-    public List<ChatChannel> getChannelByUserId(String userId) throws ExecutionException, InterruptedException {
+    public ChatChannel getChannelById(String channelId) throws ExecutionException, InterruptedException {
+        return firestore.collection(channelPath).document(channelId).get().get().toObject(ChatChannel.class);
+    }
+
+    @Override
+    public List<String> getChannelIdsByUserId(String userId) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> inChannelDocs = firestore.collection(inChannelPath)
                 .whereEqualTo("userId", userId).get().get().getDocuments();
+
         if (inChannelDocs.isEmpty()) {
             return List.of();
         }
 
-        List<String> channelIds = inChannelDocs
+        return inChannelDocs
                 .stream().map(value -> value.toObject(InChatChannel.class)
                         .getChannelId()).toList();
+    }
+
+    @Override
+    public List<ChatChannel> getChannelsByUserId(String userId) throws ExecutionException, InterruptedException {
+        List<String> channelIds = getChannelIdsByUserId(userId);
         return getChannelsContainIn(channelIds);
     }
 
     @Override
-    public List<ChatChannel> getChannelsContainIn(List<String> channelIds) throws ExecutionException, InterruptedException {
+    public List<ChatChannel> getChannelsContainIn(List<String> channelIds) {
         List<ChatChannel> channels = new ArrayList<>();
         channelIds.forEach(value -> {
             try {
@@ -103,6 +112,24 @@ public class ChannelRepoImpl implements ChannelRepo {
         });
 
         return channels;
+    }
+
+    @Override
+    public String getChannelName(ChatChannel channel) throws ExecutionException, InterruptedException {
+        if (channel.getType() == ChannelType.GROUP) return channel.getName();
+
+        String currentUserId = UserResp.currentUser().getId();
+        List<QueryDocumentSnapshot> channelNameDocs = firestore.collection(channelNamePath)
+                .whereEqualTo("channelId", channel.getId())
+                .whereEqualTo("userId", currentUserId).get().get().getDocuments();
+
+        if (channelNameDocs.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Don't find any channel name for userId");
+        }
+
+
+
+        return channelNameDocs.get(0).toObject(ChannelName.class).getName();
     }
 
     @Override

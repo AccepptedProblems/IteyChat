@@ -5,8 +5,6 @@ import com.chatapp.itey.model.payload.LoginResp;
 import com.chatapp.itey.model.payload.UserReq;
 import com.chatapp.itey.model.payload.UserResp;
 import com.chatapp.itey.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -35,14 +33,21 @@ public class UserController {
         return userSrv.loginUser(loginReq);
     }
 
+    @GetMapping("/all")
+    Mono<List<UserResp>> getAllUser() {
+        return userSrv.getAllUsers();
+    }
+
+    @GetMapping("/strange")
+    Mono<List<UserResp>> findUserNotFriendsByDisplayName(@RequestParam(required = true) String displayName) throws ExecutionException, InterruptedException {
+        return userSrv.findUserNotFriendByDisplayName(displayName);
+    }
+
     @GetMapping
     Mono<List<UserResp>> getUsersByDisplayName(@RequestParam String displayName) throws ExecutionException, InterruptedException {
         return userSrv.findUserByDisplayName(displayName);
     }
 
-    @GetMapping("/all")
-    Mono<List<UserResp>> getAllUser() {
-        return userSrv.getAllUsers();
-    }
+
 
 }

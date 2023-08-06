@@ -53,7 +53,9 @@ public class FriendRepoImpl implements FriendRepo {
     }
 
     @Override
-    public User deleteFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
+    public User deleteFriend(String friendId) throws ExecutionException, InterruptedException {
+        String currentUserId = UserResp.currentUser().getId();
+        RelationshipRequest relationshipRequest = new RelationshipRequest(currentUserId, friendId);
         List<QueryDocumentSnapshot> docs = getRelaBetweenTwoUsers(relationshipRequest);
 
         if (docs.isEmpty()) {

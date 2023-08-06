@@ -40,8 +40,8 @@ public class FriendSrvImpl implements FriendService{
     }
 
     @Override
-    public Mono<UserResp> deleteFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
-        return Mono.just(new UserResp(friendRepo.deleteFriend(relationshipRequest), ""));
+    public Mono<UserResp> deleteFriend(String friendId) throws ExecutionException, InterruptedException {
+        return Mono.just(new UserResp(friendRepo.deleteFriend(friendId), ""));
     }
 
     @Override

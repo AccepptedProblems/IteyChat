@@ -12,6 +12,6 @@ public interface FriendService {
     Mono<UserResp> addFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException;
     Mono<List<FriendResp>> friendList(String userId) throws ExecutionException, InterruptedException;
     Mono<List<FriendResp>> friendRequestList(String userId) throws ExecutionException, InterruptedException;
-    Mono<UserResp> deleteFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException;
+    Mono<UserResp> deleteFriend(String friendId) throws ExecutionException, InterruptedException;
     Mono<UserResp> confirm(String relationshipId) throws ExecutionException, InterruptedException;
 }

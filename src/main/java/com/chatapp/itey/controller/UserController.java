@@ -28,6 +28,11 @@ public class UserController {
         return userSrv.findUserById(id);
     }
 
+    @PutMapping
+    Mono<UserResp> editUser(@RequestBody UserReq userReq) throws ExecutionException, InterruptedException {
+        return userSrv.editUser(userReq);
+    }
+
     @PostMapping("/login")
     Mono<LoginResp> login(@RequestBody LoginReq loginReq) {
         return userSrv.loginUser(loginReq);

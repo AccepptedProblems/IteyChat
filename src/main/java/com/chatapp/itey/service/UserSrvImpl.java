@@ -51,6 +51,14 @@ public class UserSrvImpl implements UserService {
     }
 
     @Override
+    public Mono<UserResp> editUser(UserReq userReq) {
+        String currentUserId = UserResp.currentUser().getId();
+        Validator.userSignInInformationValidate(userReq);
+        User editedUser = userRepo.updateUser(userReq);
+        return Mono.just(new UserResp(editedUser, currentUserId));
+    }
+
+    @Override
     public Mono<LoginResp> loginUser(LoginReq loginReq) {
         try {
             Authentication authentication = authenticationManager.authenticate(

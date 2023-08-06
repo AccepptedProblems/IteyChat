@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 public interface FriendRepo {
     User addFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException;
     User confirmFriendRequest(String relationshipId) throws ExecutionException, InterruptedException;
-    User deleteFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException;
+    User deleteFriend(String friendId) throws ExecutionException, InterruptedException;
     List<String> getFriendIds() throws ExecutionException, InterruptedException;
     List<FriendResp> getFriends(String userId) throws ExecutionException, InterruptedException;
     List<FriendResp> getFriendRequest(String userId) throws ExecutionException, InterruptedException;

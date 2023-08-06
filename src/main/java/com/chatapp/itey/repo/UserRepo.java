@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface UserRepo {
     User createUser(UserReq userReq, String id) throws ExecutionException, InterruptedException;
+    User updateUser(UserReq userReq);
     User findById(String id) throws ExecutionException, InterruptedException;
     User findByEmail(String email) throws ExecutionException, InterruptedException;
     UserResp findUserRespByEmail(String email) throws ExecutionException, InterruptedException;

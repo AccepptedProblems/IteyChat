@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface UserService {
     Mono<UserResp> createUser(UserReq userReq) throws ExecutionException, InterruptedException;
+    Mono<UserResp> editUser(UserReq userReq);
     Mono<LoginResp> loginUser(LoginReq loginReq);
     Mono<UserResp> findUserById(String id) throws ExecutionException, InterruptedException;
     Mono<UserResp> findUsersByUsername(String username) throws ExecutionException, InterruptedException;

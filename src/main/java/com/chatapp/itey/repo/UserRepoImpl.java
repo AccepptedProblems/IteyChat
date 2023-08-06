@@ -67,6 +67,47 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
+    public User updateUser(UserReq userReq) {
+        String currentUserId = UserResp.currentUser().getId();
+        User newUser = new User(userReq);
+
+        DocumentReference userRefDoc = firestore.collection(userPath).document(currentUserId);
+        try {
+            return firestore.runTransaction(transaction -> {
+                User currentUser = userRefDoc.get().get().toObject(User.class);
+
+                if(!Objects.equals(newUser.getUsername(), currentUser.getUsername())) {
+                    DocumentReference newUsernameDocRef = firestore.collection(constraintPath).document(userPath).collection(userConstPath).document(newUser.getUsername());
+                    UniqueField usernameKey = new UniqueField(currentUserId);
+
+                    DocumentReference oldUsernameDocRef = firestore.collection(constraintPath).document(userPath).collection(userConstPath).document(currentUser.getUsername());
+                    transaction.delete(oldUsernameDocRef)
+                            .create(newUsernameDocRef, usernameKey);
+                }
+
+                if(!Objects.equals(newUser.getEmail(), currentUser.getEmail())) {
+                    DocumentReference newUserEmailDocRef = firestore.collection(constraintPath).document(userPath).collection(userEmailConstPath).document(newUser.getEmail());
+                    UniqueField userEmailKey = new UniqueField(currentUserId);
+
+                    DocumentReference oldUserEmailDocRef = firestore.collection(constraintPath).document(userPath).collection(userEmailConstPath).document(currentUser.getEmail());
+                    transaction.delete(oldUserEmailDocRef)
+                            .create(newUserEmailDocRef, userEmailKey);
+                }
+
+                transaction.set(userRefDoc, newUser);
+
+                return newUser;
+            }).get();
+        } catch (ExecutionException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There's something wrong. Please contact admin to resolve problem.");
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with provided information already exist");
+        }
+    }
+
+    @Override
     public User findById(String id) throws ExecutionException, InterruptedException {
         DocumentReference userDoc = firestore.collection(userPath).document(id);
         DocumentSnapshot snapshot = userDoc.get().get();

@@ -23,9 +23,9 @@ public class FriendController {
         return friendService.addFriend(relationshipRequest);
     }
 
-    @DeleteMapping
-    Mono<UserResp> deleteFriend(@RequestBody RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
-        return friendService.deleteFriend(relationshipRequest);
+    @DeleteMapping("/{id}")
+    Mono<UserResp> deleteFriend(@PathVariable("id") String friendId) throws ExecutionException, InterruptedException {
+        return friendService.deleteFriend(friendId);
     }
 
     @GetMapping("/{id}/list")

@@ -4,6 +4,8 @@ import com.chatapp.itey.model.payload.MessageReq;
 import com.chatapp.itey.model.payload.MessageResp;
 import com.chatapp.itey.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +19,8 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping
+    @MessageMapping("/chat")
+    @SendTo("message/newMessage")
     Mono<MessageResp> sendMessage(@RequestBody MessageReq messageReq) throws ExecutionException, InterruptedException {
         return messageService.sendMessage(messageReq);
     }
@@ -27,6 +31,8 @@ public class MessageController {
     }
 
     @DeleteMapping("/{id}")
+    @MessageMapping("/chat")
+    @SendTo("message/deleteMessage")
     Mono<MessageResp> deleteMessage(@PathVariable("id") String messId) throws ExecutionException, InterruptedException {
         return messageService.deleteMessage(messId);
     }

@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Message {
+public class Message implements Comparable<Message>{
     private String id;
     private String channelId;
     private String userSendId;
@@ -32,5 +32,10 @@ public class Message {
         this.type = messageReq.getType();
         this.content = messageReq.getContent();
         this.timeSent = messageReq.getTimeSent();
+    }
+
+    @Override
+    public int compareTo(Message o) {
+        return this.getTimeSent().before(o.getTimeSent()) ? 1 : 0;
     }
 }

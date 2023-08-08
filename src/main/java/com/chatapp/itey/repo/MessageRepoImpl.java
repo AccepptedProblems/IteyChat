@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -52,9 +54,10 @@ public class MessageRepoImpl implements  MessageRepo{
     public List<Message> getMessagesFromChannel(String channelId) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> messDocs = firestore.collection(messagePath)
                 .whereEqualTo("channelId", channelId)
-                .orderBy("timeSent")
                 .get().get().getDocuments();
-        return messDocs.stream().map(value -> value.toObject(Message.class)).toList();
+        List<Message> messages = messDocs.stream().map(value -> value.toObject(Message.class)).toList();
+        Collections.sort(messages);
+        return messages;
     }
 
     @Override

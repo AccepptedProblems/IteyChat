@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,8 @@ public class MessageRepoImpl implements  MessageRepo{
                 .whereEqualTo("channelId", channelId)
                 .get().get().getDocuments();
         List<Message> messages = messDocs.stream().map(value -> value.toObject(Message.class)).toList();
-        Collections.sort(messages);
+        messages = new ArrayList<>(messages);
+        messages.sort((a, b) -> a.getTimeSent().before(b.getTimeSent()) ? 1 : -1);
         return messages;
     }
 

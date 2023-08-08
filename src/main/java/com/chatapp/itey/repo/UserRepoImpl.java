@@ -163,7 +163,10 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public List<UserResp> findByDisplayName(String displayName) throws ExecutionException, InterruptedException {
-        List<QueryDocumentSnapshot> userDocs = firestore.collection(userPath)
+        List<QueryDocumentSnapshot> userDocs;
+
+        if(displayName.isEmpty()) userDocs = firestore.collection(userPath).get().get().getDocuments();
+        else userDocs = firestore.collection(userPath)
                 .whereGreaterThanOrEqualTo("displayName", displayName)
                 .get().get().getDocuments();
 

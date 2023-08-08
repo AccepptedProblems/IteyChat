@@ -52,6 +52,7 @@ public class MessageRepoImpl implements  MessageRepo{
     public List<Message> getMessagesFromChannel(String channelId) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> messDocs = firestore.collection(messagePath)
                 .whereEqualTo("channelId", channelId)
+                .orderBy("timeSent")
                 .get().get().getDocuments();
         return messDocs.stream().map(value -> value.toObject(Message.class)).toList();
     }

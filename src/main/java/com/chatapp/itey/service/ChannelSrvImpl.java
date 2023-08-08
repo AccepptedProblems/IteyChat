@@ -55,7 +55,12 @@ public class ChannelSrvImpl implements ChannelService {
                 finalChannel.setName(channelRepo.getChannelName(channel));
                 MessageResp message;
                 if(channel.getLastMessageId() == null) message = null;
-                else message = new MessageResp(messageRepo.findMessageById(channel.getLastMessageId()));
+                else {
+                    Message mess = messageRepo.findMessageById(channel.getLastMessageId());
+                    if (mess == null) message = null;
+                    else message = new MessageResp(mess);
+                }
+
                 List<UserResp> users = channelRepo.getUserInChannel(channel.getId());
                 return new ChatChannelResp(finalChannel, message, users);
             } catch (ExecutionException | InterruptedException e) {
@@ -84,7 +89,10 @@ public class ChannelSrvImpl implements ChannelService {
         }
         ChatChannel channel = results.get(0);
         channel.setName(channelRepo.getChannelName(channel));
-        MessageResp message = new MessageResp(messageRepo.getMessagesFromChannel(channel.getId()).get(0));
+        MessageResp message;
+        List<Message> messes = messageRepo.getMessagesFromChannel(channel.getId());
+        if(!messes.isEmpty()) message = new MessageResp(messes.get(0));
+        else message = null;
         List<UserResp> users = channelRepo.getUserInChannel(channel.getId());
         return Mono.just(new ChatChannelResp(channel, message, users));
     }

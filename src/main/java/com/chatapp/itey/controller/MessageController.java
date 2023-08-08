@@ -19,7 +19,6 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping
-    @MessageMapping("/chat")
     @SendTo("message/newMessage")
     Mono<MessageResp> sendMessage(@RequestBody MessageReq messageReq) throws ExecutionException, InterruptedException {
         return messageService.sendMessage(messageReq);

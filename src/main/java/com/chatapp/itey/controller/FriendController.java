@@ -28,18 +28,18 @@ public class FriendController {
         return friendService.deleteFriend(friendId);
     }
 
-    @GetMapping("/{id}/list")
-    Mono<List<FriendResp>> getFriends(@PathVariable("id") String id) throws ExecutionException, InterruptedException {
-        return friendService.friendList(id);
+    @GetMapping
+    Mono<List<UserResp>> getFriends() throws ExecutionException, InterruptedException {
+        return friendService.friendList();
     }
 
-    @GetMapping("/{id}/request")
-    Mono<List<FriendResp>> getFriendRequests(@PathVariable("id") String id) throws ExecutionException, InterruptedException {
-        return friendService.friendRequestList(id);
+    @GetMapping("/request")
+    Mono<List<UserResp>> getFriendRequests() throws ExecutionException, InterruptedException {
+        return friendService.friendRequestList();
     }
 
     @PutMapping("/{id}/confirm")
-    Mono<UserResp> confirmFriendRequest(@PathVariable("id") String id) throws ExecutionException, InterruptedException {
-        return friendService.confirm(id);
+    Mono<UserResp> confirmFriendRequest(@PathVariable("id") String userId) throws ExecutionException, InterruptedException {
+        return friendService.confirm(userId);
     }
 }

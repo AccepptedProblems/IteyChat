@@ -43,7 +43,7 @@ public class UserSrvImpl implements UserService {
     @Override
     public Mono<UserResp> createUser(UserReq userReq) throws ExecutionException, InterruptedException {
         Validator.userSignInInformationValidate(userReq);
-        String id = IteyUtils.newUUID(userReq.getUsername());
+        String id = IteyUtils.newUUID(userReq.getEmail());
         String password = passwordEncoder.encode(userReq.getPassword());
         userReq.setPassword(password);
         User createdUser = userRepo.createUser(userReq, id);
@@ -93,8 +93,12 @@ public class UserSrvImpl implements UserService {
     @Override
     public Mono<List<UserResp>> findUserNotFriendByDisplayName(String displayName) throws ExecutionException, InterruptedException {
         List<UserResp> result = new ArrayList<>();
-        List<UserResp> users = userRepo.findByDisplayName(displayName);
-        List<String> friendIds = friendRepo.getFriendIds();
+        String currentUserId = UserResp.currentUser().getId();
+        User currentUser = userRepo.findById(currentUserId);
+        List<UserResp> users = userRepo.getAll().stream()
+                .filter((value) -> value.getDisplayName().toLowerCase().contains(displayName.toLowerCase()) && !value.getId().equals(currentUserId) )
+                .toList();
+        List<String> friendIds = currentUser.getFriendIds();
         users.forEach(value -> {
             if(!friendIds.contains(value.getId())) {
                 result.add(value);

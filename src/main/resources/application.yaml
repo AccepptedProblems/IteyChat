@@ -6,14 +6,26 @@ jwt:
 
 data:
   database:
-    users: Users
-    relationships: Relationship
-    messages: Messages
-    channel: ChatChannel
-    channelName: ChatChannelName
-    inChatChannel: InChatChannel
-    constraints: Constraint
+    users: ChatBoxUsers
+    relationships: ChatBoxRelationship
+    messages: ChatBoxMessages
+    channel: ChatBoxChatChannel
+    channelName: ChatBoxChatChannelName
+    inChatChannel: ChatBoxInChatChannel
+    constraints: ChatBoxConstraint
 
   constraints:
     usernameConst: Username
     userEmailConst: UserEmail
+
+  mongodb:
+    database: simplechat
+    uri: mongodb://root:password@localhost:27017
+
+    user-collection: users
+    relationships: relationships
+    messages: messages
+    channel: channel
+    channelName: ChatChannelName
+    inChatChannel: InChatChannel
+    constraints: Constraint

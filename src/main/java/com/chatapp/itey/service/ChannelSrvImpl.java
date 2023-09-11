@@ -31,7 +31,6 @@ public class ChannelSrvImpl implements ChannelService {
     @Override
     public Mono<ChatChannelResp> createChannel(ChatChannelReq chatChannelReq) throws ExecutionException, InterruptedException {
         ChatChannel channel = channelRepo.addChannel(chatChannelReq);
-        channel.setName(channelRepo.getChannelName(channel));
         List<UserResp> users = userRepo.getUsersContainIn(chatChannelReq.getUserIds());
         return Mono.just(new ChatChannelResp(channel, null, users));
     }
@@ -46,9 +45,9 @@ public class ChannelSrvImpl implements ChannelService {
     }
 
     @Override
-    public Mono<List<ChatChannelResp>> getUserChannels(String userId) throws ExecutionException, InterruptedException {
+    public Mono<List<ChatChannelResp>> getChannels() throws ExecutionException, InterruptedException {
+        String userId = UserResp.currentUser().getId();
         List<ChatChannel> channels = channelRepo.getChannelsByUserId(userId);
-        System.out.println(channels);
         List<ChatChannelResp> chatChannelResps = channels.stream().map(channel -> {
             try {
                 ChatChannel finalChannel = channel;

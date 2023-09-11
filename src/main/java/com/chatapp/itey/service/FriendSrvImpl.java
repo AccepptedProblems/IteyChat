@@ -22,30 +22,29 @@ public class FriendSrvImpl implements FriendService{
     public Mono<UserResp> addFriend(RelationshipRequest relationshipRequest) throws ExecutionException, InterruptedException {
         Validator.validFriendRequest(relationshipRequest);
         if(friendRepo.checkFriendRequest(relationshipRequest)) {
-            Relationship rela = friendRepo.getRelationshipByUserId(relationshipRequest);
-            return Mono.just(new UserResp(friendRepo.confirmFriendRequest(rela.getId()), relationshipRequest.getUserToId()));
+            return Mono.just(new UserResp(friendRepo.confirmFriendRequest(relationshipRequest.getUserId()), relationshipRequest.getUserId()));
         } else {
-            return Mono.just(new UserResp(friendRepo.addFriend(relationshipRequest), relationshipRequest.getUserToId()));
+            return Mono.just(new UserResp(friendRepo.addFriend(relationshipRequest), relationshipRequest.getUserId()));
         }
     }
 
     @Override
-    public Mono<List<FriendResp>> friendList(String userId) throws ExecutionException, InterruptedException {
-        return Mono.just(friendRepo.getFriends(userId));
+    public Mono<List<UserResp>> friendList() throws ExecutionException, InterruptedException {
+        return Mono.just(friendRepo.getFriends());
     }
 
     @Override
-    public Mono<List<FriendResp>> friendRequestList(String userId) throws ExecutionException, InterruptedException {
-        return Mono.just(friendRepo.getFriendRequest(userId));
+    public Mono<List<UserResp>> friendRequestList() throws ExecutionException, InterruptedException {
+        return Mono.just(friendRepo.getFriendRequest());
     }
 
     @Override
-    public Mono<UserResp> deleteFriend(String friendId) throws ExecutionException, InterruptedException {
-        return Mono.just(new UserResp(friendRepo.deleteFriend(friendId), ""));
+    public Mono<UserResp> deleteFriend(String userId) throws ExecutionException, InterruptedException {
+        return Mono.just(new UserResp(friendRepo.deleteFriend(userId), userId));
     }
 
     @Override
-    public Mono<UserResp> confirm(String relationshipId) throws ExecutionException, InterruptedException {
-        return Mono.just(new UserResp(friendRepo.confirmFriendRequest(relationshipId), ""));
+    public Mono<UserResp> confirm(String userId) throws ExecutionException, InterruptedException {
+        return Mono.just(new UserResp(friendRepo.confirmFriendRequest(userId), userId));
     }
 }

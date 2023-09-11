@@ -28,7 +28,7 @@ dayOfBirth: Date ;</panel_attributes>
       <w>190</w>
       <h>110</h>
     </coordinates>
-    <panel_attributes>Friend
+    <panel_attributes>Relationship
 --
 id: String
 userFromId: String

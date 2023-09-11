@@ -2,10 +2,13 @@ package com.chatapp.itey.model.entity;
 
 import com.chatapp.itey.model.entity.modelType.Gender;
 import com.chatapp.itey.model.payload.UserReq;
+import com.chatapp.itey.utils.IteyUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,14 +23,18 @@ public class User {
     private String displayName;
     private Gender gender;
     private String dayOfBirth;
+    private List<String> friendIds;
+    private List<String> friendRequestIds;
 
     public User(UserReq userReq) {
-        this.username = userReq.getUsername();
+        this.username = IteyUtils.newUUID(userReq.getEmail());
         this.password = userReq.getPassword();
         this.email = userReq.getEmail();
         this.displayName = userReq.getDisplayName();
         this.gender = userReq.getGender();
         this.dayOfBirth = userReq.getDayOfBirth().toString();
+        this.friendRequestIds = List.of();
+        this.friendIds = List.of();
     }
 
 

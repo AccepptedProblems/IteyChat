@@ -19,9 +19,10 @@ public class Relationship {
     private RelationshipStatus status;
 
     public Relationship(RelationshipRequest relationshipRequest) {
-        this.id = IteyUtils.newUUID(relationshipRequest.getUserFromId() + "-" + relationshipRequest.getUserToId());
-        this.userFromId = relationshipRequest.getUserFromId();
-        this.userToId = relationshipRequest.getUserToId();
+        String currentUserId = id;
+        this.id = IteyUtils.newUUID("");
+        this.userFromId = currentUserId;
+        this.userToId = relationshipRequest.getUserId();
         this.status = RelationshipStatus.PENDING;
     }
 }

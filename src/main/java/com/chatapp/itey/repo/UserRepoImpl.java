@@ -167,12 +167,12 @@ public class UserRepoImpl implements UserRepo {
 
         if(displayName.isEmpty()) userDocs = firestore.collection(userPath).get().get().getDocuments();
         else userDocs = firestore.collection(userPath)
-                .whereGreaterThanOrEqualTo("displayName", displayName)
+                .whereEqualTo("displayName", displayName)
                 .get().get().getDocuments();
 
         if(userDocs.isEmpty()) {
-            log.error("No user has this username");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user has this username");
+            log.error("No user has this name");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user has this name");
         }
         return userDocs.stream().map(value -> new UserResp(value.toObject(User.class), value.getId())).toList();
     }

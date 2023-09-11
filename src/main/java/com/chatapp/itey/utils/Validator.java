@@ -2,6 +2,7 @@ package com.chatapp.itey.utils;
 
 import com.chatapp.itey.model.payload.RelationshipRequest;
 import com.chatapp.itey.model.payload.UserReq;
+import com.chatapp.itey.model.payload.UserResp;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -13,9 +14,6 @@ public class Validator {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^(.+)@(\\S+) $.", Pattern.CASE_INSENSITIVE);
     public static void userSignInInformationValidate(UserReq userReq) {
-        if (userReq.getUsername().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be an empty string");
-        }
         if (userReq.getEmail().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be an empty string");
         }
@@ -31,10 +29,11 @@ public class Validator {
     }
 
     public static void validFriendRequest(RelationshipRequest relationshipRequest) {
-        if(relationshipRequest.getUserToId().equals(relationshipRequest.getUserFromId())) {
+        String id = UserResp.currentUser().getId();
+        if(relationshipRequest.getUserId().equals(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot send friend request to yourself");
         }
-        if (relationshipRequest.getUserToId().isEmpty() || relationshipRequest.getUserFromId().isEmpty()) {
+        if (relationshipRequest.getUserId().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userId must not be empty");
         }
     }

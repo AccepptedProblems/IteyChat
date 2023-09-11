@@ -10,6 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RelationshipRequest {
-    private String userFromId;
-    private String userToId;
+    private String userId;
 }

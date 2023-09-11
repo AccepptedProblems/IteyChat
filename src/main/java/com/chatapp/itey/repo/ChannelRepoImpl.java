@@ -40,13 +40,16 @@ public class ChannelRepoImpl implements ChannelRepo {
 
     @Override
     public ChatChannel addChannel(ChatChannelReq chatChannelReq) throws ExecutionException, InterruptedException {
+        String currentUserId = UserResp.currentUser().getId();
+        User currentUser = userRepo.findById(currentUserId);
         ChatChannel chatChannel = new ChatChannel(chatChannelReq);
 
         firestore.collection(channelPath).document(chatChannel.getId()).set(chatChannel);
+        User user1 = userRepo.findById(chatChannelReq.getUserIds().get(0));
+        User user2 = userRepo.findById(chatChannelReq.getUserIds().get(1));
+
 
         if (chatChannelReq.getType() == ChannelType.DIRECT) {
-            User user1 = userRepo.findById(chatChannelReq.getUserIds().get(0));
-            User user2 = userRepo.findById(chatChannelReq.getUserIds().get(1));
             ChannelName userChannelName1 = new ChannelName(chatChannel.getId(), chatChannelReq.getUserIds().get(0), user2.getDisplayName());
             ChannelName userChannelName2 = new ChannelName(chatChannel.getId(), chatChannelReq.getUserIds().get(1), user1.getDisplayName());
 
@@ -55,7 +58,6 @@ public class ChannelRepoImpl implements ChannelRepo {
         }
 
         chatChannelReq.getUserIds().forEach(id -> firestore.collection(inChannelPath).add(new InChatChannel(chatChannel.getId(), id)));
-
         return chatChannel;
     }
 
@@ -124,11 +126,8 @@ public class ChannelRepoImpl implements ChannelRepo {
                 .whereEqualTo("userId", currentUserId).get().get().getDocuments();
 
         if (channelNameDocs.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Don't find any channel name for userId");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Don't find any channel name for userId " + currentUserId + " with channelId " + channel.getId());
         }
-
-
-
         return channelNameDocs.get(0).toObject(ChannelName.class).getName();
     }
 
